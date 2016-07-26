@@ -1,13 +1,29 @@
 #pragma once
 
 #include<iostream>
-
 #include<vector>
 #include<cassert>
 
 using namespace std;
 
 template<class T>
+struct Greater
+{
+	bool operator()(const T& l, const T&r)
+	{
+		return l > r;
+	}
+};
+template<class T>
+struct Less
+{
+	bool operator()(const T& l, const T&r)
+	{
+		return l < r;
+	}
+};
+
+template<class T,class Compare = Greater<T>>
 class Heap
 {
 public:
@@ -42,17 +58,18 @@ public:
 protected:
 	void _AdjustDown(size_t parent)
 	{
+		Compare com;
 		size_t child = parent*2+1;
 		while(child < _a.size())
 		{
 			//选出左右孩子中较大的
 			if(child+1 < _a.size() &&
-				_a[child] < _a[child+1])
+				com(_a[child+1],_a[child]))
 			{
 				++child;
 			}
 			//如果孩子比父亲大，则交换并向下继续走
-			if(_a[child] > _a[parent])
+			if(com(_a[child], _a[parent]))
 			{
 				swap(_a[child],_a[parent]);
 				parent = child;
@@ -66,10 +83,11 @@ protected:
 	}
 	void _AdjustUp(size_t child)
 	{
+		Compare com;
 		size_t parent = (child-1)/2;
 		while(child > 0)
 		{
-			if(_a[child] > _a[parent])
+			if(com(_a[child], _a[parent]))
 			{
 				swap(_a[child],_a[parent]);
 				child  = parent;
