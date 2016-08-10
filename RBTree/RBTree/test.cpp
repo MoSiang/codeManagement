@@ -15,6 +15,10 @@ void TestRBTreeNode()
 	}
 
 	cout << t.CheckRBTree() << endl;
+
+	cout << t[2] << endl;
+	cout << t[5] << endl;
+	cout << t[9] << endl;
 }
 int main()
 {

@@ -37,13 +37,14 @@ public:
 	RBTree()
 		:_root(NULL)
 	{}
-	bool Insert(const K& key, const V& value)
+	pair<Node*, bool> Insert(const K& key, const V& value)
 	{
 		if (_root == NULL)
 		{
 			_root = new Node(key, value);
 			_root->_col = BLACK;
-			return true;
+			//return true;
+			return pair<Node*, bool>(_root, true);
 		}
 
 		Node* parent = NULL;
@@ -62,7 +63,8 @@ public:
 			}
 			else
 			{
-				return false;
+				//return false;
+				return pair<Node*, bool>(cur, false);
 			}
 		}
 		
@@ -78,6 +80,7 @@ public:
 			cur->_parent = parent;
 		}
 
+		Node* tmp = cur;//Insert返回新插入的节点（把cur保存起来防止找不到新插入的cur）
 		while (cur != _root && parent->_col == RED)
 		{
 			Node* grandfather = parent->_parent;
@@ -133,9 +136,51 @@ public:
 		}
 
 		_root->_col = BLACK;
-		return true;
+		//return true;
+		return pair<Node*, bool>(tmp, true);
 	}
 	
+	Node* Find(const K& key)
+	{
+		Node* cur = _root;
+		while (cur)
+		{
+			if (cur->_key > key)
+			{
+				cur = cur->_left;
+			}
+			else if (cur->_key > key)
+			{
+				cur = cur->_right;
+			}
+			else
+			{
+				return cur;
+			}
+		}
+	}
+
+	/*V& operator[](const K& key)
+	{
+		Node* ret = Find(key);
+
+		if (ret)
+		{
+			return ret->_value;
+		}
+		else
+		{
+			pair<Node*, bool> ret = Insert(key, V());
+			return ret.first->_value;
+		}
+	}*/
+
+	V& operator[](const K& key)
+	{
+		pair<Node*, bool> ret = Insert(key, V());
+		return ret.first->_value;
+	}
+
 	bool CheckRBTree()
 	{
 		if (_root && _root->_col == RED)
